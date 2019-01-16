@@ -154,19 +154,68 @@ head(catch_df)</code></pre>
 ## 5    SSE 1890       0     251   42    0    0 292             
 ## 6    SSE 1891       0     274   24    0    0 298</code></pre>
 <pre class="r"><code># %&gt;% ctrl shift m </code></pre>
-<pre class="r"><code>catch_long&lt;-catch_df %&gt;% 
-  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)
+<pre class="r"><code>#catch_long&lt;-catch_df %&gt;% 
+ # select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)#
+
 catch_long&lt;-catch_df %&gt;% 
   select(-All, -notesRegCode) %&gt;% 
-  gather(key = &quot;species&quot;, value = &quot;catch&quot;, -Year, - Region)
+  gather(key = &quot;species&quot;, value = &quot;catch&quot;, -Year, -Region)
+
+catch_long &lt;- catch_long %&gt;% 
+  rename(catch_thousands = catch)
+
 head(catch_long)</code></pre>
-<pre><code>##   Region Year species catch
-## 1    SSE 1886 Chinook     0
-## 2    SSE 1887 Chinook     0
-## 3    SSE 1888 Chinook     0
-## 4    SSE 1889 Chinook     0
-## 5    SSE 1890 Chinook     0
-## 6    SSE 1891 Chinook     0</code></pre>
+<pre><code>##   Region Year species catch_thousands
+## 1    SSE 1886 Chinook               0
+## 2    SSE 1887 Chinook               0
+## 3    SSE 1888 Chinook               0
+## 4    SSE 1889 Chinook               0
+## 5    SSE 1890 Chinook               0
+## 6    SSE 1891 Chinook               0</code></pre>
+<pre class="r"><code>#%&gt;%
+ # mutate(catch=ifelse(catch_thousand== &quot;I&quot;, 1, catch_thousand)) %&gt;%
+  #mutate(catch_thousand=as.integer(catch_thousand))</code></pre>
+</div>
+<div id="spread" class="section level1">
+<h1>Spread</h1>
+<p>Make a wide dataframe using spread</p>
+</div>
+<div id="separate-and-unite" class="section level1">
+<h1>Separate and Unite</h1>
+<pre class="r"><code>dates_df &lt;- data.frame(date = c(&quot;5/24/1930&quot;,
+                                &quot;5/25/1930&quot;,
+                                &quot;5/26/1930&quot;,
+                                &quot;5/27/1930&quot;,
+                                &quot;5/28/1930&quot;),
+                       stringsAsFactors = FALSE)
+dates_df</code></pre>
+<pre><code>##        date
+## 1 5/24/1930
+## 2 5/25/1930
+## 3 5/26/1930
+## 4 5/27/1930
+## 5 5/28/1930</code></pre>
+<pre class="r"><code>dates_sep &lt;- dates_df %&gt;%
+  separate(col = date, into=c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), sep=&quot;/&quot;, remove=F)
+head(dates_sep)</code></pre>
+<pre><code>##        date month day year
+## 1 5/24/1930     5  24 1930
+## 2 5/25/1930     5  25 1930
+## 3 5/26/1930     5  26 1930
+## 4 5/27/1930     5  27 1930
+## 5 5/28/1930     5  28 1930</code></pre>
+</div>
+<div id="unite" class="section level1">
+<h1>Unite</h1>
+<pre class="r"><code>dates_unite &lt;- dates_sep %&gt;%
+  unite(date_iso, year, month, day, sep = &quot;-&quot;)
+head(dates_unite)</code></pre>
+<pre><code>##        date  date_iso
+## 1 5/24/1930 1930-5-24
+## 2 5/25/1930 1930-5-25
+## 3 5/26/1930 1930-5-26
+## 4 5/27/1930 1930-5-27
+## 5 5/28/1930 1930-5-28</code></pre>
 </div>
 
 

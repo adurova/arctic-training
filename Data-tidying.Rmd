@@ -15,6 +15,59 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Join
 ```{r}
+library(dplyr)
+library(tidyr)
+catch_df <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"), stringsAsFactors = FALSE)
+head(catch_df)
+# %>% ctrl shift m 
+```
 
+```{r}
+#catch_long<-catch_df %>% 
+ # select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)#
+
+catch_long<-catch_df %>% 
+  select(-All, -notesRegCode) %>% 
+  gather(key = "species", value = "catch", -Year, -Region)
+
+catch_long <- catch_long %>% 
+  rename(catch_thousands = catch)
+
+head(catch_long)
+
+
+#%>%
+ # mutate(catch=ifelse(catch_thousand== "I", 1, catch_thousand)) %>%
+  #mutate(catch_thousand=as.integer(catch_thousand))
+```
+
+#Spread 
+Make a wide dataframe using spread
+
+# Separate and Unite
+```{r}
+dates_df <- data.frame(date = c("5/24/1930",
+                                "5/25/1930",
+                                "5/26/1930",
+                                "5/27/1930",
+                                "5/28/1930"),
+                       stringsAsFactors = FALSE)
+dates_df
+
+```
+
+```{r}
+dates_sep <- dates_df %>%
+  separate(col = date, into=c("month", "day", "year"), sep="/", remove=F)
+head(dates_sep)
+
+
+```
+
+# Unite
+```{r}
+dates_unite <- dates_sep %>%
+  unite(date_iso, year, month, day, sep = "-")
+head(dates_unite)
 ```
 
