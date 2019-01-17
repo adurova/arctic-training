@@ -6,11 +6,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE) #if we do not want to show any code, then set echo=FALSE#
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(DT)
+library(leaflet)
 ```
 
 ## R Markdown
@@ -98,5 +99,30 @@ write a file
 write.csv(annual_esc, 
           "derived data/annual_esc.csv", 
           row.names = F)
+```
+
+
+#Creating an interactive Map using leaflet 
+
+Install the library (leaflet)
+
+*find unique locations with lat/long values
+
+```{r}
+locations<-esc %>%
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()#dropping missing values in the location data with any missing information in the requested columns#
+
+datatable(locations)
+```
+
+create an interactive map
+
+```{r}
+leaflet(locations) %>%
+  addTiles() %>% #adds background map#
+  addMarkers(~ Longitude, ~Latitude, popup = ~ Location)
+
+#markers can be plotted from different datasets. 
 ```
 
