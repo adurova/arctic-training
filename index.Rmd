@@ -1,0 +1,79 @@
+---
+title: "Index"
+author: "AleksandraDurova"
+date: "January 17, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DT)
+```
+
+## R Markdown
+Read in data from 
+Alaska Department of Fish and Game, Division of Commercial Fisheries. 2017. Daily salmon escapement counts from the OceanAK database, Alaska, 1921-2017. Knowledge Network for Biocomplexity. doi:10.5063/F1S46Q6M. 
+
+```{r, echo=FALSE}
+esc <-read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Af119a05b-bbe7-4aea-93c6-85434dcb1c5e", method="libcurl"),
+               header = TRUE,
+               stringsAsFactors = F)
+#head(esc)#
+```
+
+calculate annual, regional total escapement 
+
+*separate dat into year - month- day
+* group by and summarize to calculate the sum over unique region-year-species combinations 
+*filter for salmon species
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+annual_esc <- esc %>%
+  separate(sampleDate, into = c("year", "month", "day"), sep= "-") %>% 
+  mutate(year = as.numeric(year)) %>%
+  group_by(SASAP.Region, Species, year) %>% 
+  summarise(escapement = sum(DailyCount)) %>% 
+  filter(Species %in% c("Chinook", "Sockeye", "Pink", "Chum", "Coho"))
+
+
+# %in% filter different species#
+
+```
+library (DT) 
+
+```{r, echo=FALSE}
+datatable(annual_esc) #dynamic table#
+```
+
+#Static Plot
+
+#Interactive Map
+
+we are interested in Species over regions and years
+
+```{r, echo=FALSE}
+ggplot(data = annual_esc, mapping = aes(x=Species, y=escapement, fill = SASAP.Region)) + 
+  geom_col() #geometry of the plot, coloring always outside of the aes function# fill="name of the variable" colors each the category in diff colors#
+
+```
+
+timeseries for only Kodiak region escapement by species
+
+```{r, echo=FALSE}
+
+my_theme <- theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) #save your formatting for all plots and apply it for all of plots#
+
+ggplot(data = filter(annual_esc, SASAP.Region == "Kodiak"), 
+       aes(x=year, y=escapement, color=Species)) +
+  geom_line() +
+  geom_point() +
+  ylab("Escapement") +
+  ggtitle("Kodiak Salmon Escapement") +
+  my_theme
+#you can filter inside in the plot, not creating a new dataframe for each plot#
+```
+
+Plot timeseries of escapement by species for all regions 
