@@ -93,3 +93,10 @@ ggsave("Figures/region_escapement.png", plot = p,
        units = "in")
 ```
 
+write a file
+```{r}
+write.csv(annual_esc, 
+          "derived data/annual_esc.csv", 
+          row.names = F)
+```
+
