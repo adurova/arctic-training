@@ -1,0 +1,15 @@
+---
+title: "Untitled"
+author: "AleksandraDurova"
+date: "January 17, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Source our utility function from the script called "Fagr_to_celsius.R"
+```{r}
+source("Fahr_to_celsius.R")
+```
